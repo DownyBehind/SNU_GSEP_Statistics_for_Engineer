@@ -1,0 +1,147 @@
+# 예제 2
+Grp1=rnorm(5,70,5); Grp2=rnorm(5,80,5); Grp3=rnorm(5,90,5);
+df1 = data.frame(Grp1, Grp2, Grp3)
+signif(df1,3)
+
+# 여기서 나타난 결과 (매번 다른 결과가 나타남)
+#     Grp1 Grp2 Grp3
+#   1 72.2 83.8 82.4
+#   2 71.7 80.3 89.1
+#   3 69.9 87.8 98.3
+#   4 67.4 79.1 87.2
+#   5 71.6 76.9 92.1
+
+df2=stack(df1); df2
+
+# install.packages("lattice")
+# library("lattice")  
+# dotplot(values ~ ind, cex=1.2, df2)  R의 일반적 점도표 함수
+
+# install.packages("ggpubr")
+library("ggpubr")
+ggline(df2, x="ind", y="values", add=c("mean_sd", "jitter"), title="Data in ANOVA model",  ylab="", xlab="")
+
+# 예제 3
+x = 1:20
+x1 = sample(x, 5); x1
+x2 = sample(x[-x1], 5); x2
+x3 = sample(x[-c(x1,x2)], 5); x3
+x4 = x[-c(x1,x2,x3)]; x4
+
+# 예제 4
+Group = rep(c("Seoul","Busan","Gwangju"), each=3)
+X = c(550, 600, 650, 520, 570, 620, 500, 580, 540)
+OneWay = aov(X ~ Group)
+anova(OneWay)
+aggregate(X, by=list(Group), mean) # 수준별 평균 모형
+model.tables(OneWay) # 효과 모형
+OneWay$coefficients # Busan이 레퍼런스 그룹인 효과 모형
+
+ptukey(x, nm = 6, df = 5)
+
+# 예제 4
+Mon = c(150, 120, 130, 160, 140)
+Tue = c(170, 180, 190, 200, 160)
+Wed = c(130, 140, 150, 160, 170)
+Thr = c(200, 180, 170, 190, 210)
+Fri = c(160, 170, 150, 140, 180)
+Sat = c(220, 230, 210, 240, 220)
+Sun = c(250, 240, 230, 220, 210)
+
+df1 = data.frame(Mon,Tue,Wed,Thr,Fri,Sat,Sun)
+df2 = stack(df1)
+M1 = aov(values~ind, df2)
+anova(M1)
+model.tables(M1)
+
+TukeyHSD(M1)
+# plot(TukeyHSD(M1))
+
+# install.packages('DescTools')
+library(DescTools)
+DunnettTest(values~ind, df2, control='Tue')
+
+# library("DescTools")
+PostHocTest(M1, method='lsd')
+
+PostHocTest(M1, method='bonferroni')
+
+# library("ggpubr")
+ggline(df2, x="ind", y="values", add=c("mean_sd", "jitter"), ylab="# of visitors", xlab='')
+
+bartlett.test(values ~ ind, df2)
+
+plot(density(M1$residuals), xlab='', main="Residual Distribution", lwd=2)
+
+# install.packages("car")
+library(car)
+leveneTest(M1, center=median) 
+
+oneway.test(values ~ ind, df2, var.equal = FALSE)
+
+kruskal.test(values ~ ind, df2)
+
+ri = M1$residuals
+qqnorm(ri)
+qqline(ri, lwd=2)
+
+shapiro.test(ri)
+
+boxplot(ri ~ df2$ind, xlab="", ylab="Residuals", range=1.5, boxwex=0.4)
+
+Lo=quantile(ri,0.25)-0.3*IQR(ri); Up=quantile(ri,0.75)+0.3*IQR(ri)
+ri[(ri<Lo) | (ri>Up)]
+
+# 예제 5
+X = c(70,85,82,90,88,89,48,46,50,59,54,56,50,55,48,52,66,53)
+Method = c(rep('Method1',6),rep('Method2',6),rep('Method3',6))
+Gender = rep(c(rep('Male',3), rep('Female',3)), 3)
+
+M2 = aov(X ~ Method*Gender)
+anova(M2)
+
+M3 = aov(X ~ Method + Gender)
+anova(M3)
+
+interaction.plot(Method, Gender, X, xlab='')
+
+# 예제 6
+X = c(50,45,55,70,72,68,67,60,58,51,57,48)
+Method = c(rep('Method1',6),rep('Method2',6))
+Gender = rep(c(rep('Male',3), rep('Female',3)), 2)
+
+M4 = aov(X ~ Method*Gender)
+anova(M4)
+interaction.plot(Method, Gender, X, xlab='')
+
+# 연습문제 1
+D1 = scan("clipboard") # n1=22 (obs)
+D2 = scan("clipboard") # n2=24 (obs)
+D3 = scan("clipboard") # n3=17 (obs)
+D4 = scan("clipboard") # n4=33 (obs)
+df1 = stack(list(Banks=D1,Computer=D2,Construct=D3,Energy=D4))
+M1 = aov(values~ind, df1)
+anova(M1)
+plot(density(M1$residuals), xlab='', main="Residual Distribution", lwd=2)
+
+library(car)
+leveneTest(M1)
+
+boxplot(values ~ ind, df1, xlab="", ylab="ROE", range=1.5, boxwex=0.4)
+kruskal.test(values ~ ind, df1)
+pairwise.wilcox.test(df1$values, df1$ind, p.adjust.method="none")
+
+# 연습문제 2
+df2 = read.table("clipboard", stringsAsFactors=TRUE)
+df2$V5 = df2$V3 - df2$V4
+colnames(df2) <- c('Diet','Exer','Pre','Post','Diff')
+M2 = aov(Diff ~ Diet*Exer, df2)
+anova(M2)
+
+library(car)
+leveneTest(M2)
+
+shapiro.test(M2$residuals)
+bartlett.test(Diff ~ interaction(Diet,Exer), df2)
+M2$coefficients
+interaction.plot(df2$Diet, df2$Exer, df2$Diff, trace.label='운동병행 여부', ylab='체중 감량 효과', xlab='다이어트 방법')

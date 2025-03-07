@@ -1,0 +1,115 @@
+# [그림 10-1]
+x=seq(-4,4,0.01); y=dnorm(x); x1=qnorm(0.025); x2=qnorm(0.975)
+plot(x, y, xlab='', type='l', ylab='', lwd=2, main='') 
+polygon(c(x2,x[(x>x2)]), c(0,y[(x>x2)]), col="gray")
+polygon(c(x[(x<x1)],x1), c(y[(x<x1)],0), col="gray")
+
+x2=qnorm(0.95)
+plot(x, y, xlab='', type='l', ylab='', lwd=2, main='') 
+polygon(c(x2,x[(x>x2)]), c(0,y[(x>x2)]), col="gray")
+
+x1=qnorm(0.05)
+plot(x, y, xlab='', type='l', ylab='', lwd=2, main='') 
+polygon(c(x[(x<x1)],x1), c(y[(x<x1)],0), col="gray")
+
+# [그림 10-2]
+x=seq(162,178,0.01); y=dnorm(x, 170, 2); x1=166; x2=174
+plot(x, y, xlab='', type='l', ylab='', lwd=2, main='p값 확률에 대한 계산: 제1형 대립가설의 경우')
+polygon(c(x2,x[(x>x2)]), c(0,y[(x>x2)]), col="gray")
+polygon(c(x[(x<x1)],x1), c(y[(x<x1)],0), col="gray")
+
+plot(x, y, xlab='', type='l', ylab='', lwd=2, main='p값 확률에 대한 계산: 제2형 대립가설의 경우') 
+polygon(c(x2,x[(x>x2)]), c(0,y[(x>x2)]), col="gray")
+
+plot(x, y, xlab='', type='l', ylab='', lwd=2, main='p값 확률에 대한 계산: 제3형 대립가설의 경우') 
+polygon(c(x[(x<x1)],x1), c(y[(x<x1)],0), col="gray")
+
+# 예제 2
+x = c(7.35, 7.39, 7.87, 7.41, 7.42, 7.69, 7.82, 7.75, 7.32, 7.46)
+mean(x); sd(x)
+t.test(x, alternative="less", mu=7.7)
+
+# 예제 4
+binom.test(81, 200, 0.45)
+
+# 예제 6
+x = c(80.30, 74.66, 78.83, 79.72, 82.49, 76.61, 78.58, 80.38, 82.19, 81.49)
+# install.packages("DescTools")
+library(DescTools)
+VarTest(x, alternative="greater", sigma.squared=4, conf.level=0.95)
+
+
+# 예제 7
+x = c(81, 72, 90, 87, 110, 102, 66, 73, 83, 84)
+y = c(78, 72, 85, 84, 101, 101, 60, 68, 80, 79)
+t.test(x, y, paired=TRUE, alternative="greater")
+
+# 예제 8
+x = c(22.4, 32.4, 21.2, 36.8, 42.2, 16.4, 15.5, 38.8, 24.9, 26.6, 28.5, 25.0, 21.8, 26.5, 10.1, 14.1, 12.5, 14.6, 30.5, 13.0, 41.3, 40.4, 25.5, 35.8)
+y = c(15.7, 14.1, 12.3, 12.1, 14.7, 10.3, 14.3, 21.4, 15.0, 40.8, 11.5, 13.7, 16.9, 11.0,  8.7, 11.8,  8.2)
+t.test(x, y, alternative="two.sided", var.equal=TRUE, conf.level=0.99)
+
+# 예제 9
+var.test(x, y, alternative="two.sided")
+
+# 예제 10
+S1=var(x); S2=var(y)
+n=(S1/24+S2/17)^2; d=(S1/24)^2/23 + (S2/17)^2/16
+n/d  # 38.87669
+qt(0.005, n/d) # -2.708352
+t=(mean(x)-mean(y))/sqrt(S1/24+S2/17) # 4.000871
+2*pt(-t,n/d) # 0.0002741627
+t.test(x, y, alternative="two.sided", conf.level=0.99)
+
+# 예제 11
+x1 = qnorm(0.025, 70, 4/10) 
+x2 = qnorm(0.975, 70, 4/10) 
+pnorm(x2, 69.2, 0.4) - pnorm(x1, 69.2, 0.4)
+
+# [그림 10-3]
+x=seq(68,72,0.01); y1=dnorm(x, 70, 0.4); x1=69.216; x2=70.784
+plot(x, y1, xlab='', type='l', ylab='', lwd=2, main='제2종오류 확률에 대한 그래프적 의미')
+y=dnorm(x, 69.2, 0.4)
+lines(x, y, type='l', lwd=2)
+polygon(c(x1,x[(x>x1)&(x<x2)],x2), c(0,y[(x>x1)&(x<x2)],0), col="gray")
+# abline(v=x1, lwd=2); abline(v=x2, lwd=2)
+lines(x, y1, type='l', lwd=2)
+
+# 표에 대한 값
+mu = seq(68, 72, 0.4); Pwr1 = rep(0, 11)
+x1=qnorm(0.025, 70, 0.4); x2=qnorm(0.975, 70, 0.4) # n=100, alpha 5%
+for(i in 1: 11) Pwr1[i]=1-pnorm(x2,mu[i],0.4)+pnorm(x1,mu[i],0.4)
+Pwr1
+
+# [그림 10-4]
+mu = seq(68, 72, 0.01);
+Pwr1 = rep(0, 401); Pwr2 = rep(0, 401); Pwr3 = rep(0, 401); 
+
+x1=qnorm(0.025, 70, 0.4); x2=qnorm(0.975, 70, 0.4) # n=100, alpha 5%
+for(i in 1: 401) Pwr1[i]=1-pnorm(x2,mu[i],0.4)+pnorm(x1,mu[i],0.4)
+
+x1=qnorm(0.1, 70, 0.4); x2=qnorm(0.9, 70, 0.4) # n=100, alpha 20%
+for(i in 1: 401) Pwr2[i]=1-pnorm(x2,mu[i],0.4)+pnorm(x1,mu[i],0.4)
+
+x1=qnorm(0.025, 70, 4/sqrt(30)); x2=qnorm(0.975, 70, 4/sqrt(30)) # n=30, alpha 5%
+for(i in 1: 401) Pwr3[i]=1-pnorm(x2,mu[i],4/sqrt(30))+pnorm(x1,mu[i],4/sqrt(30))
+
+plot(mu, Pwr1, lwd=2, type='l', xlab="모평균의 변화", ylab="검정력(Power)", main="검정력 함수")
+lines(mu, Pwr2, lwd=2, lty=2, type='l')
+lines(mu, Pwr3, lwd=2, lty=3, type='l')
+
+# 예제 12
+power.t.test(delta=2, sd=3, sig.level=0.05, power=0.9, type="one.sample", alternative="one.sided")
+power.t.test(n=20, delta=2, sd=3, sig.level=0.05, type="one.sample", alternative="one.sided")
+
+# 연습문제 4
+mu = seq(68, 72, 0.4); Beta = rep(0, 11)
+x1=qnorm(0.05, 70, 0.4) # n=100, alpha 5%
+for(i in 1: 11) Beta[i] = 1-pnorm(x1,mu[i],0.4)
+Beta
+
+mu = seq(68, 71, 0.01); Pwr = rep(0, 301); x1=qnorm(0.05, 70, 0.4)
+for(i in 1: 301) Pwr[i]=pnorm(x1,mu[i],0.4)
+plot(mu, Pwr, lwd=2, type='l', xlab="모평균의 변화", ylab="검정력(Power)", main="검정력 함수")
+abline(v=70)
+

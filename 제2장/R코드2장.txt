@@ -1,0 +1,39 @@
+행 = c('1행', '2행'); 열 = c('1열', '2열'); 차원 = c('1차원', '2차원')
+My_Array = array(c('문자', 1:7), dim=c(2, 2, 2), dimnames=list(행, 열, 차원))
+My_Array
+
+MyFactor = factor(c("A등급", "C등급", "A등급", "B등급", "A등급"))
+MyFactor
+
+이름 = c("은정","영미","철수")
+나이 = c(14,16,13)
+Mydf = data.frame(name = 이름, age = 나이)
+Mydf
+summary(Mydf)
+
+이름1 = "철희";  나이1 = 15
+Mydf1 = data.frame(name = 이름1, age = 나이1)
+Newdf1 = rbind(Mydf, Mydf1)
+
+grade = factor(c("A등급", "C등급", "A등급", "B등급"))
+Newdf2 = cbind(Mydf1, grade)
+
+점수변수 = scan("D:/SD카드/R/Data/점수.txt")
+
+점수DataFrame = read.table("D:/SD카드/R/Data/시험성적.txt", header=TRUE)
+str(점수DataFrame)
+점수DataFrame = read.csv("D:/SD카드/R/Data/시험성적.txt", header=TRUE)
+
+# install.packages("readxl")
+library(readxl)
+점수티블 = read_excel("D:/SD카드/R/Data/시험성적.xlsx")
+str(점수티블)
+
+점수티블 = read_excel("D:/SD카드/R/Data/시험성적.xlsx", # 경로와 파일이름 지정
+     sheet = "시험성적", # 데이터가 있는 엑셀 Sheet 이름 지정
+     range = "A1:D5", # 읽을 데이터의 범위 지정
+     col_names = TRUE, # 첫 번째 행은 데이터가 아닌 변수 이름이 있다는 의미
+     col_types = "guess", # 열에 해당하는 데이터 타입은 알아서 결정하라는 의미
+     na = "NA") # 결측값은 NA(Not Available)으로 표기하겠다는 의미
+
+write.table(점수티블, "clipboard", row.names=FALSE)

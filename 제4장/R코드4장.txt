@@ -1,0 +1,107 @@
+Freq = c(190, 638, 188, 197, 692, 210, 183, 686, 175, 239, 717, 242)
+Region = rep(c('Gang1S', 'Gang2N', 'Gang3D'), 4)
+Marital = c(rep('Married', 6), rep('Single', 6))
+Gender = rep(c(rep('1Male', 3), rep('2Female', 3)), 2)
+SalesT = xtabs(Freq ~ Gender + Region + Marital)
+class(SalesT)
+SaleT
+
+round(prop.table(SalesT), 3)
+margin.table(SalesT, 1) # margin.table(SalesT, "Gender")
+margin.table(SalesT, c(1,2)) / sum(SalesT)
+prop.table(SalesT, margin = 1) # prop.table(SalesT, margin = "Gender")
+round(prop.table(SalesT, margin = c(2,3)), 3)
+
+library(ggplot2)
+SalesDF = data.frame(Gender, Region, Marital, Freq)
+
+ggplot(SalesDF, aes(x = Region, fill = Gender)) + 
+  geom_bar(position = "stack", aes(weight=Freq/sum(Freq)*100)) +
+  labs(y = "Percent", x = "Region", title = "Stacked Bar Chart")
+
+ggplot(SalesDF, aes(x = Region, fill = Gender)) + 
+  geom_bar(position = "dodge", aes(weight=Freq)) +
+  labs(x = "Region", title = "Grouped Bar Chart")
+
+ggplot(SalesDF, aes(x = Region, fill = Gender)) + 
+  geom_bar(position = "fill", aes(weight=Freq)) +
+  labs(y="Marginal Proportion", x="Region", title="Segmented Bar Chart")
+
+Titanic = read.csv('titanic891.csv', h=T)
+TitanicT = xtabs( ~ Survived + Pclass + Sex, Titanic)
+library(vcd)
+mosaic(TitanicT, shade=TRUE, legend=T)
+
+EL = read.csv("ExpLife.csv", h=T)
+ggplot(EL, aes(GDP, ExpLife)) + geom_point()
+ggplot(EL, aes(GDP/1000, ExpLife)) + geom_point(color="blue", alpha = .3) +
+   geom_smooth(method="loess", color="black") +
+   scale_x_continuous(breaks=seq(0, 60, 10), limits = c(0, 60)) + 
+   labs(x = "GDP Per Capita ($1000 dollar unit) ", y = "Life Expectancy",
+       title = "Life Expectancy with GDP Per Capita",
+       subtitle = "142 countries for 1952-2007",
+       caption = "Source: http://www.gapminder.org/data/") +
+   theme_minimal()
+
+OzoneDF = read.table("ozone.txt", h=T)
+pairs(OzoneDF, panel=panel.smooth, main="Scatter Plot Matrix")
+
+library(PerformanceAnalytics)
+chart.Correlation(OzoneDF)
+mtext("Scatter Plot Matrix with Correlation and Histogram", cex=1.5, line=3)
+
+coplot(ozone~wind|temp, OzoneDF, panel=panel.smooth)
+
+
+CR = read.table("CreditScore.txt", h=T)
+CR$Budo=as.factor(CR$Budo); levels(CR$Budo)=c("Bad", "Good")
+aggregate(Score~Budo, CR, summary)
+boxplot(Score~Budo, data=CR, main="우불량 기업의 신용점수", xlab="Credit Score", 
+   ylab="", range=3, horizontal=TRUE)
+
+library(ggplot2)
+ggplot(CR, aes(Score, fill=Budo)) + theme_classic() +
+  scale_x_continuous(breaks=seq(300, 1100, 100), limits=c(300, 1100))+
+  geom_density(alpha=0.5) + labs(x ="Credit Score", y="") +
+  ggtitle("Credit Score Distributions for Good/Bad") +
+  theme(plot.title = element_text(size=18, face="bold", hjust=0.5))
+
+W = read.table("SilwoodWeather.txt",h=T)
+W1 = W[,c(1,4)]; colnames(W1)[1]="temp"
+W2 = W[,c(2,4)]; colnames(W2)[1]="temp"
+WW = rbind(W1, W2)
+
+ggplot(WW, aes(x=as.factor(month), y=temp))+theme_bw() +
+  geom_violin() + geom_boxplot(width=0.2) +
+  labs(x ="Month", y="Daily Upper Temperature") +
+  ggtitle("Daily Temperature at Silwood Park: 1987-2005")
+
+# X=aggregate(temp~month, WW, function(x) diff(range(x)))
+# X[order(X$temp),]
+
+BK = read.csv("berkely.csv", h=T)
+BK$Gender <- factor(BK$Gender, levels=c("Male","Female"))
+BKT = xtabs(Freq ~ Gender + Admit + Dept, data=BK) 
+margin.table(BKT, c(1,2))
+
+library(ggplot2)
+BK$GenDept=paste(BK$Dept,'-',BK$Gender)
+BK$Admit <- factor(BK$Admit, levels=c("Rejected","Admitted"))
+
+ggplot(BK, aes(x = GenDept, fill = Admit)) + theme_bw() +
+  geom_bar(position = "fill", width=0.6, aes(weight=Freq)) +
+  labs(y="Admission Rate in Graduate School", x="Department and Gender")
+
+ggplot(BK, aes(x = Dept, fill = Gender)) + theme_bw() +
+  geom_bar(position = "stack", width=0.6, aes(weight=Freq)) +
+  labs(y = "Frequency", x = "Department", title = "학과별 총 지원자 수와 남성,여성 비율")
+
+DA = read.table("DrugA.txt", h=T)
+plot(DA$time, DA$effect, col="red", xlab="Response Time", ylab="Effect ", main="Effects of DrugA and DrugB over Response Time")
+abline(lm(DA$effect ~ DA$time), , col="red", lwd=2)    
+
+DB = read.table("DrugB.txt", h=T)
+points(DB$time, DB$effect, col="blue")     
+abline(lm(DB$effect ~ DB$time), col="blue", lwd=2)
+
+legend("topleft", legend=c("Drug A","Drug B"), pch=c(1,1), col=c("red","blue"))

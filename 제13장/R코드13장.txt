@@ -1,0 +1,155 @@
+# 예제 1
+x = 1:3
+y = 1 + 2*x + rnorm(3,0,0.5); signif(y,3)
+
+# 예제 2
+x=1:3; y = c(2.69, 4.38, 8.13)
+lm(y ~ x)
+
+# 예제 3
+(2.69-5.067)^2 + (4.38-5.067)^2 + (8.13-5.067)^2 # SST 총제곱합
+(2.347-5.067)^2 + (5.067-5.067)^2 + (7.787-5.067)^2 # SSR 회귀제곱합
+(2.69-2.347)^2 + (4.38-5.067)^2 + (8.13-7.787)^2 # SSE 오차제곱합
+c((2.69-2.347), (4.38-5.067), (8.13-7.787)) # 잔차: 실제값과 에측값 차이
+(2.69-2.347) + (4.38-5.067) + (8.13-7.787) # 잔차의 합 (0이 되어야 함)
+
+x=1:3; y = c(2.69, 4.38, 8.13)
+anova(lm(y ~ x))
+
+# 예제 4
+x=1:3; y = c(2.69, 4.38, 8.13)
+M1 = lm(y ~ x); summary(M1)
+confint(M1, 'x', level=0.88)
+
+# 예제 5
+x=1:3; y = c(2.69, 4.38, 8.13)
+M1 = lm(y ~ x); summary(M1)
+confint(M1, '(Intercept)', level=0.80)
+
+# 그림 13-3 R 코드
+install.packages("readxl")
+library(readxl)
+df1 = read_excel("아파트매매.xlsx", sheet='Data', range='B4:E33')
+plot(df1$Area, df1$Sales, pch=20, cex=1.2, col="deeppink", xlab='', ylab='', main='')
+abline(lm(Sales~Area, df1), col="black", lwd=2)
+abline(v=33.5, col="black")
+
+# 예제 7
+x=1:3; y = c(2.69, 4.38, 8.13)
+M1 = lm(y ~ x);
+predict(M1, newdata=data.frame(x=c(1,2,3)), interval="confidence")
+predict(M1, newdata=data.frame(x=c(1,2,3)), interval="prediction")
+
+# 잔차분석 샘플그림
+y=runif(500)
+x=qnorm(y)
+y=y+rnorm(500, 0, 0.02)
+plot(x, y)
+M1 = lm(y~x)
+abline(M1,lwd=2)
+plot(M1, which=1)
+
+# 실습 예제
+# install.packages("readxl")
+library(readxl)
+df1 = read_excel("아파트매매.xlsx", sheet='Data', range='B4:E30')
+df1=as.data.frame(df1) 
+M1 = lm(Sales~Area, df1); summary(M1)
+
+library(gvlma)
+gvlma(M1)
+
+plot(df1$Area, df1$Sales, pch=20, cex=1.2, xlab='면적 (단위: 평)', ylab='매매가격 (단위: 백만원)', main='면적에 따른 아파트 매매가격 변화')
+abline(M1, lwd=2)
+
+plot(fitted(M1), rstudent(M1), xlab='예측값', ylab='외적 스튜던트화된 잔차', main="예측값에 따른 외적 스튜던트화된 잔차")
+abline(h=0)
+
+outliers = abs(rstudent(M1))>1.5
+cbind(df1[outliers,], rstud=rstudent(M1)[outliers]) 
+leverage = hatvalues(M1) > 4/26
+cbind(df1[leverage,], hatv=hatvalues(M1)[leverage]) 
+Dffits = abs(dffits(M1)) > 2*sqrt(3/(26-3))
+cbind(df1[Dffits,], dffi=dffits(M1)[Dffits]) 
+CookD = cooks.distance(M1) > 4/(26-2)
+cbind(df1[CookD,], CookD=cooks.distance(M1)[CookD]) 
+
+plot(M1)
+
+df2 = df1[-c(2,3), ]
+M2 = lm(Sales~Area, df2); summary(M2)
+
+gvlma::gvlma(M2)
+
+car::durbinWatsonTest(M2)
+
+car::ncvTest(M2)
+shapiro.test(residuals(M2))
+
+plot(M1, which=3) 
+plot(M2, which=3) 
+
+car::slp(M2) # Power 변환
+car::powerTransform(M2) # Box-Cox 변환
+
+# 예제 8
+# install.packages("scatterplot3d")
+library(scatterplot3d)
+x1 = trunc(runif(10)*10)+1
+x2 = trunc(runif(10)*10)+11 
+y = 1+ 2*x1 + 3*x2 + rnorm(10, 0, 10)
+data.frame(x1, x2, y)
+M4 = lm(y ~ x1 + x2); M4
+G3d=scatterplot3d(x1,x2,y, angle=55, scale.y=0.8, pch=16, zlim=c(20,120), color ="red", main ="회귀 평면", grid=FALSE)
+G3d$plane3d(M4, lty.box = "solid")
+G3d$points3d(x1, x2, fitted(M4), col="blue", type="h", pch=16)
+
+# (참고) 예제로 생성된 교재에서 사용한 데이터 내용
+> data.frame(x1, x2, y)
+   x1 x2        y
+1   4 14 50.75980
+2   1 16 41.39093
+3   4 13 23.55423
+4   5 19 62.02147
+5   1 18 59.09995
+6   7 18 77.93622
+7  10 12 44.25575
+8   4 14 58.86981
+9   8 19 82.66984
+10 10 13 79.87974
+
+# 예제 9
+library(readxl)
+df1 = read_excel("아파트매매.xlsx", sheet='Data', range='B4:E30')
+FullModel = lm(Sales ~ . , df1)
+PartialModel1 = update(FullModel, .~.-Rooms)
+PartialModel2 = lm(Sales ~ Area , df1)
+NullModel = lm(Sales ~ 1 , df1)
+
+F1 = anova(FullModel); F1
+SSR = sum(F1[1:3,2]); SSR; MSR = SSR/3; MSR 
+Fvalue=MSR/F1[4,3]; 1-pf(Fvalue, 3,22)
+anova(NullModel, FullModel)
+
+summary(FullModel)$r.squared; summary(FullModel)$adj.r.squared; sigma(FullModel)^2; AIC(FullModel); BIC(FullModel)
+summary(PartialModel1)$r.squared; summary(PartialModel1)$adj.r.squared; sigma(PartialModel1)^2; AIC(PartialModel1); BIC(PartialModel1)
+summary(PartialModel2)$r.squared; summary(PartialModel2)$adj.r.squared; sigma(PartialModel2)^2; AIC(PartialModel2); BIC(PartialModel2)
+
+summary(FullModel) 
+anova(PartialModel2, FullModel) 
+
+predict(PartialModel1, newdata=data.frame(Dur=30, Area=32), interval="confidence")
+predict(PartialModel1, newdata=data.frame(Dur=30, Area=32), interval="prediction")
+
+# 예제 10
+
+x1=1:10; x2=21:30 
+y = 1 + 2*x1 + 3*x2 + rnorm(10, 0, 10)
+M5 = lm(y ~ x1 + x2); summary(M5) 
+
+# 예제 11
+
+# install.packages("PerformanceAnalytics")
+PerformanceAnalytics::chart.Correlation(df1) 
+car::vif(FullModel) 
+car::vif(PartialModel1) 

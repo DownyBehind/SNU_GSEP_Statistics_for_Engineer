@@ -1,0 +1,109 @@
+dbinom(2, 3, 0.2) # X~B(3, 0.2)에서 Pr(X=2) 또는 f(2)
+pbinom(1, 3, 0.2) # Pr(X≤1) 또는 F(1)
+qbinom(0.9, 3, 0.2) # Pr(X≤x)≥0.5를 만족하는 최소 x값
+rbinom(2, 3, 0.2) # X~B(3, 0.2)에서 난수 2개 생성
+
+pmf=sapply(0:10, function(x) dbinom(x, 10, 0.2))
+plot(0:10, pmf, type='h', lwd=3, main='B(10, 0.2)의 확률질량함수', xlab='', ylab='', ylim=c(0,0.3))
+abline(h=0, lwd=3)
+
+pmf=sapply(0:10, function(x) dbinom(x, 10, 0.5))
+plot(0:10, pmf, type='h', lwd=3, main='B(10, 0.5)의 확률질량함수', xlab='', ylab='', ylim=c(0,0.3))
+abline(h=0, lwd=3)
+
+pmf=sapply(0:10, function(x) dbinom(x, 10, 0.8))
+plot(0:10, pmf, type='h', lwd=3, main='B(10, 0.8)의 확률질량함수', xlab='', ylab='', ylim=c(0,0.3))
+abline(h=0, lwd=3)
+
+dhyper(2, 10, 5, 3) # a=10, b=5, n=3 의 f(2)
+phyper(1, 10, 5, 3) # Pr(X≤1) 또는 F(1)
+qhyper(0.3, 10, 5, 3) # Pr(X≤x)≥0.3를 만족하는 최소 x값
+rhyper(5, 10, 5, 3) # 초기하분포의 난수 5개 생성
+
+dpois(0, 6) # λ=6 에 대한 f(0)
+1-ppois(11, 9) # λ=9 에 대한 Pr(X≥12) 또는 1-F(11)
+qpois(0.8, 9) # Pr(X≤x)≥0.8를 만족하는 최소 x값
+rpois(5, 3) # λ=3 인 포아송분포의 난수 5개 생성
+
+pmf=sapply(0:10, function(x) dpois(x, 0.5))
+plot(0:10, pmf, type='h', lwd=3, main='P(λ=0.5)에 대한 확률질량함수', xlab='', ylab='', ylim=c(0,0.6))
+abline(h=0, lwd=3)
+
+pmf=sapply(0:10, function(x) dpois(x, 2))
+plot(0:10, pmf, type='h', lwd=3, main='P(λ=2)에 대한 확률질량함수', xlab='', ylab='', ylim=c(0,0.6))
+abline(h=0, lwd=3)
+
+pmf=sapply(0:10, function(x) dpois(x, 5))
+plot(0:10, pmf, type='h', lwd=3, main='P(λ=5)에 대한 확률질량함수', xlab='', ylab='', ylim=c(0,0.6))
+abline(h=0, lwd=3)
+
+factorial(171)
+1-ppois(1, 1.2)
+1-pbinom(1, 30000, 4/100000)
+
+curve(dnorm(x,100,15), 40, 160, main=expression("N(100,15"^2*")  확률밀도함수"), xlab='', ylab='', lwd=3)
+
+x=seq(-4, 4, 0.001); y=dnorm(x)
+plot(x, y, xlab='', type='l', ylab='', lwd=2, main=expression("표준정규분포의 z"[alpha]*" 에 대한 모습")) 
+polygon(c(1.5,x[(x>1.5)&(x<=4)]), c(0,y[(x>1.5)&(x<=4)]), col="gray")
+
+qnorm(c(0.25,0.5,0.75), 100, 15)
+
+curve(dnorm(x,100,15), 40, 160, lwd=2, ylab="Normal Probability Density Function")
+abline(v=qnorm(c(0.25,0.5,0.75),100,15))
+
+y = c(92, 108, 124)
+x = c(89.88, 100, 110.12)
+plot(x,y, xlab="Theoretical Quantile", ylab="Sample Quantile", main="QQ plot with 3 Data", pch=19, xlim=c(70,130), ylim=c(70,130))
+abline(a=0, b=1, lwd=2)
+
+y = c(92, 108 ,124)
+qqnorm(y, xlim=c(-3,3), ylim=c(70,130), pch=19)
+qqline(y, lwd=2)
+
+y=rnorm(300, 100, 15); y=sort(y); x=rep(0,300)
+for (i in 1:300) x[i] = qnorm(i/301, 100, 15)
+plot(x, y, xlim=c(70,130), ylim=c(70,130), main="Q-Q plot with N(100, 225)", xlab="Theoretical Quantile", ylab="Sample Quantile")
+abline(0, 1, lwd=2)
+
+
+qqnorm(y, xlim=c(-3,3), ylim=c(70,130), main="Normal Distribution")
+qqline(y, lwd=2)
+
+y=rnorm(300, 100, 15)
+qqnorm(y, xlim=c(-3,3), ylim=c(70,130), main="Normal Distribution")
+qqline(y, lwd=2)
+
+y=runif(300, 80, 120)
+qqnorm(y, xlim=c(-3,3), ylim=c(70,130), main="Short Tailed Distribution")
+qqline(y, lwd=2)
+
+y = 100 + 8*rt(300, 2)
+qqnorm(y, xlim=c(-3,3), ylim=c(70,130), main="Long Tailed Distribution")
+qqline(y, lwd=2)
+
+y = 70 + 5*rchisq(300, 2)
+qqnorm(y, xlim=c(-3,3), ylim=c(70,130), main="Long Right Tailed Distribution")
+qqline(y, lwd=2)
+
+y = 70 + 4*(13-rchisq(300, 2))
+qqnorm(y, xlim=c(-3,3), ylim=c(70,130), main="Long Left Tailed Distribution")
+qqline(y, lwd=2)
+
+x=seq(0,3,0.001); y1=dexp(x, 2); y2=dexp(x, 1); y3=dexp(x, 0.5)
+plot(x, y1, type='l', lwd=2, xlab='', ylab='', lty=1, main="다양한 지수분포들" )
+lines(x, y2, lwd=2, lty=2); lines(x, y3, lwd=2, lty=3)
+legend(2, 1.5,legend=c("Lambda=2", "Lambda=1", "Lambda=0.5"), lty=c(1,2,3))
+
+===========
+
+pmf = sapply(0:3, function(x) dhyper(x, 5, 95, 3))
+plot(0:3, pmf, type='h', lwd=3, main='초기하분포 확률질량함수', xlab='', ylab='', xlim=c(-1,4))
+abline(h=0, lwd=3)
+
+IQ = scan('NormalCheck.csv', sep=',')
+qqnorm(IQ)
+qqline(IQ, lwd=2)
+
+hist(IQ, freq=F, xlab="", main="Normal Check Data", breaks=25)
+polygon(density(IQ), lwd=2)

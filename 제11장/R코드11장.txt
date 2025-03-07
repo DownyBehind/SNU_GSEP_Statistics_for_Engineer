@@ -1,0 +1,56 @@
+# 예제 2
+Oi = c(4, 7, 8, 13, 11, 5)
+chisq.test(x=Oi, p=rep(1/6,6))
+
+# 예제 3
+Oi = c(315, 108, 101, 32)
+chisq.test(x=Oi, p=c(9,3,3,1)/16)
+
+# 예제 4
+Table1=as.table(rbind(c(76, 32, 46), c(48, 23, 47)))
+dimnames(Table1)=list(gender=c("F","M"),Brand=c("L사","P사", "S사"))
+class(Table1)
+Table1
+chisq.test(Table1)
+결과객체=chisq.test(Table1); 결과객체$expected
+
+# install.packages("gmodels")
+library("gmodels")
+CrossTable(Table1, digits=2, expected=TRUE, prop.r=TRUE, prop.c=FALSE, prop.t=FALSE, prop.chisq=FALSE, chisq=TRUE)
+
+# 예제 5
+Table2=as.table(rbind(c(76, 46), c(48, 47)))
+dimnames(Table2)=list(gender=c("F","M"),Brand=c("L사", "S사"))
+chisq.test(Table2, correct=FALSE)
+
+library("gmodels")
+CrossTable(Table2, digits=2, expected=TRUE, prop.r=FALSE, prop.c=FALSE, prop.t=TRUE, prop.chisq=TRUE, chisq=TRUE)
+
+# 연습문제 1
+x=seq(40,140,20); p=rep(0,5)
+for(i in 0:5) p[i]=pnorm(x[i+1],100,20)-pnorm(x[i],100,20)
+p[1]=pnorm(x[2],100,20); p[5]=p[5]+(1-sum(p))
+p
+500*p
+
+Oi = c(25, 50, 225, 125, 75)
+chisq.test(x=Oi, p=p)
+
+x = seq(50, 130, 20)
+xbar=sum(x*Oi)/sum(Oi); xbar
+sqrt(sum(Oi*(x-xbar)^2)/(sum(Oi)-1))
+
+# 연습문제 2
+library(gmodels)
+
+Table.L=as.table(rbind(c(76, 78), c(48, 70)))
+dimnames(Table.L)=list(gender=c("F","M"),Brand=c("L사", "타사"))
+CrossTable(Table.L, digits=2, expected=TRUE, prop.r=TRUE, prop.c=FALSE, prop.t=FALSE, prop.chisq=TRUE, chisq=TRUE)
+
+Table.P=as.table(rbind(c(32, 122), c(23, 95)))
+dimnames(Table.P)=list(gender=c("F","M"),Brand=c("P사", "타사"))
+CrossTable(Table.P, digits=2, expected=TRUE, prop.r=TRUE, prop.c=FALSE, prop.t=FALSE, prop.chisq=TRUE, chisq=TRUE)
+
+Table.S=as.table(rbind(c(46, 108), c(47, 71)))
+dimnames(Table.S)=list(gender=c("F","M"),Brand=c("S사", "타사"))
+CrossTable(Table.S, digits=2, expected=TRUE, prop.r=TRUE, prop.c=FALSE, prop.t=FALSE, prop.chisq=TRUE, chisq=TRUE)

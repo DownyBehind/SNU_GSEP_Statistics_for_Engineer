@@ -1,0 +1,94 @@
+gender = c('M', 'F', 'M', 'M', 'F', 'M', 'F', 'M', 'F')
+Btype = c('B', 'A', 'O', 'AB', 'A', 'B', 'AB', 'A', 'B')
+
+table(gender)
+table(Btype)
+table(gender, Btype)
+
+barplot(table(Btype), xlab="혈액형", ylab="빈 도 수", main="막대그래프 예제")
+pie(table(Btype), main = "원형그래프 예제", clockwise=TRUE)
+
+barplot(table(gender, Btype)/9, ylab="상 대 도 수", main="막대그래프 예제", col=c("white","gray"), beside=TRUE)
+legend("topright", c("Female","Male"), fill=c("white", "gray"))
+
+# install.packages("qcc")
+library(qcc)
+pareto.chart(table(Btype), main='파레토차트 예제', col=gray.colors(4))
+
+# install.packages("ggplot2")
+library(ggplot2)
+DF1 = read.csv("KmPer1L.csv")
+ggplot(DF1, aes(x=KPL)) + geom_dotplot(method='histodot', binwidth=1)
+
+dotchart(DF1$KPL, labels = DF1$CarName)
+
+table(cut(DF1$KPL, breaks=seq(4,16,by=2)))
+
+CR = read.table("CreditScore.txt", header=TRUE)
+par(mfrow=c(2,2))
+hist(CR$Score)
+hist(CR$Score, xlab="", main="", breaks=seq(from=200, to=1200, by=10))
+hist(CR$Score, freq=F, xlab="Credit Score", main="", breaks=100, xlim=c(500,900))
+polygon(density(CR$Score), lwd=2)
+plot(density(CR$Score), xlim=c(500,900), xlab="Credit Score", main="", lwd=2)
+
+Score = scan("ExamScore.txt")
+stem(Score)
+
+plot(ecdf(Score), verticals=TRUE, main="Empirical CDF", xlab="")
+
+CR = read.table("CreditScore.txt", header=TRUE)
+CS.D=density(CR$Score); CS.D$x[which.max(CS.D$y)]
+summary(Score)
+
+Fn=ecdf(Score); Fn(80)
+quantile(Score, probs=c(0.9, 0.25))
+
+diff(range(Score))
+IQR(Score)
+mean(abs(Score-mean(Score)))
+median(abs(Score-median(Score)))
+mad(Score, constant=1)
+var(Score)
+sd(Score)
+sd(Score)/mean(Score) * 100
+
+# install.packages("moments")
+library(moments)
+skewness(Score)
+3*(mean(Score)-median(Score))/sd(Score)
+kurtosis(Score)
+
+boxplot(Score, xlab='시험점수', range=0.5, horizontal=TRUE)
+
+x = 1:5
+scale(x)[,] #standardization
+scale(x, center=min(x), scale=diff(range(x)))[,] #normalization
+scale(x, center=median(x), scale=IQR(x))[,] # robust scaler
+rank(x) # rank scaling
+
+(연습문제)
+
+2. Score = scan("ExamScore.txt")
+Fn=ecdf(Score)
+EmpiricalCDF = Fn(Score) - 0.01 
+Transformed_Score = qnorm(EmpiricalCDF, mean=70, sd=10)
+plot(density(Transformed_Score), main="Normal Score with mean=70, sd=10")
+
+3. AAPL = read.csv("aapl.csv", h=T); Rt = AAPL$Return
+summary(Rt)
+sd(Rt); IQR(Rt)
+moments::skewness(Rt); 3*(mean(Rt)-median(Rt))/sd(Rt)
+moments::kurtosis(Rt)
+boxplot(Rt, xlab='Log Return', range=3, horizontal=TRUE)
+hist(Rt, freq=F, xlab="Log Return", main="", breaks=100)
+
+4. Q13 = quantile(Rt, prob=c(0.25, 0.75))
+LOF = Q13[[1]] - 3*IQR(Rt); UOF = Q13[[2]] + 3*IQR(Rt)
+length(Rt[ (Rt<LOF) | (Rt>UOF) ])
+AAPL[ (Rt<LOF) | (Rt>UOF), ]
+
+LB = mean(Rt)-2*sd(Rt);  UB = mean(Rt)+2*sd(Rt)
+length(Rt[ (Rt>=LB) & (Rt<=UB) ]) / length(Rt)
+
+

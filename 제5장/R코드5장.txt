@@ -1,0 +1,13 @@
+x = runif(1000); xx = ifelse(x>0.5, 1, 0)
+for (i in 1:1000) yy[i] = mean(xx[1:i])
+plot(yy, xlab='Number of Trials', ylab='Relative Frequency', 
+  main='Law of Large Numbers Simulation', type='l', ylim=c(0,1), lwd=2 )
+abline(h=0.5)
+
+library(arules)
+판매내역 = read.transactions("연관규칙_연습문제.txt", format="basket", sep=",")
+판매내역
+
+라면_연관관계=apriori(판매내역, parameter=list(supp=0.3, conf=0.1, minlen=2, maxlen=2), appearance=list(rhs="라면"))
+inspect(라면_연관관계)
+

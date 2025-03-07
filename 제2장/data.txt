@@ -1,0 +1,5 @@
+name  age  sex
+Lee     55    M
+Park    47     F
+Kim     26     F
+Yoon   29    M

@@ -1,0 +1,93 @@
+xbar=rep(0, 100000)
+for (i in 1:100000) 
+  xbar[i]=mean(runif(10))
+hist(xbar, xlab="", freq=F, main="", breaks=seq(from=0, to=1, by=0.01))
+polygon(density(xbar), lwd=2) 
+sd(xbar)
+
+x=seq(0.01, 10, 0.01); y1=dchisq(x, 1); y3=dchisq(x, 3); y5=dchisq(x, 5)
+plot(x, y1, xlab='', type='l', ylab='', lwd=2, lty=1,  ylim=c(0,0.5), main='카이제곱분포의 확률밀도함수') 
+lines(x, y3, type='l', col="red", lwd=2, lty=2)
+lines(x, y5, type='l', col="blue", lwd=2, lty=3)
+legend(6, 0.4, legend=c("자유도 1","자유도 3", "자유도 5"), lty=c(1,2,3), col=c("black", "red","blue"))
+
+x=seq(0,20,0.01); y=dchisq(x,5); x1=qchisq(0.05, 5); x2=qchisq(0.95, 5)
+plot(x, y, xlab='', type='l', ylab='', lwd=2, main='자유도가 5인 카이제곱분포의 확률밀도함수') 
+polygon(c(x2,x[(x>x2)]), c(0,y[(x>x2)]), col="gray")
+polygon(c(x[(x<x1)],x1), c(y[(x<x1)],0), col="gray")
+
+x = 1:4 ; y = 5:10 
+n = length(x); m = length(y)
+Sx = var(x); Sy = var(y)
+Sp = ((n-1)*Sx + (m-1)*Sy) / (n+m-2); Sp
+
+x=seq(-5, 5, 0.01); y1=dt(x, 3); y2=dnorm(x)
+plot(x, y2, xlab='', type='l', ylab='', lwd=2, main='자유도 3인 t-분포의 확률밀도함수') 
+lines(x, y1, type='l', col="red", lwd=2, lty=2)
+legend(2, 0.35, legend=c("표준정규분포 (분산:1)", "자유도 3인 t-분포 (분산:3)"), lty=c(1,2), col=c("black","red"))
+
+x=seq(-6,6,0.01); y=dt(x, 3); x1=qt(0.05, 3); x2=qt(0.95, 3)
+plot(x, y, xlab='', type='l', ylab='', lwd=2, main='자유도가 3인 t분포의 확률밀도함수') 
+polygon(c(x2,x[(x>x2)],6), c(0,y[(x>x2)],0), col="gray")
+polygon(c(x[(x<x1)],x1,-6), c(y[(x<x1)],0,0), col="gray")
+abline(v=0)
+
+T = rep(0, 100000)
+for (i in 1:100000) { Z = rnorm(6)
+  T[i] = sqrt(3/14)*(Z[4]+2*Z[5]+3*Z[6])/sqrt(Z[1]^2+Z[2]^2+Z[3]^2) }
+mean(T); var(T)
+hist(T, breaks=500, freq=F, xlim=c(-10,10), ylim=c(0,0.4), xlab='', main='예제의 시뮬레이션 결과')
+x=seq(-10,10,0.01)
+lines(x, dt(x,3), lwd=2)
+
+x = c(4,6,8,10); y = c(1,3,5); n=4; m=3
+Sx = var(x); Sy = var(y)
+Sp = ((n-1)*Sx + (m-1)*Sy) / (n+m-2); Sp
+T = (mean(x)-mean(y)) / sqrt(Sp*(1/n + 1/m))
+1-pt(T, n+m-2)
+
+x=seq(0.01, 4, 0.01); y1=df(x, 1,1); y2=df(x, 5,2); y3=df(x, 100,100)
+plot(x, y1, xlab='', type='l', ylab='', lwd=3, lty=1,  ylim=c(0,2.5), main='다양한 F-분포의 확률밀도함수') 
+lines(x, y2, type='l', col="red", lwd=3, lty=2)
+lines(x, y3, type='l', col="blue", lwd=3, lty=3)
+legend(2.5, 2, legend=c(expression(list(n[1]==1,n[2]==1)),expression(list(n[1]==5,n[2]==2)), expression(list(n[1]==100,n[2]==100))), lty=c(1,2,3), col=c("black", "red","blue"))
+
+x=seq(0.01,6,0.01); y=df(x,10,10); x1=qf(0.05,10,10); x2=qf(0.95,10,10)
+plot(x, y, xlab='', type='l', ylab='', lwd=2, main='자유도가 (10,10)인 F분포의 확률밀도함수') 
+polygon(c(x2,x[(x>x2)],25), c(0,y[(x>x2)],0), col="gray")
+polygon(c(x[(x<x1)],x1,0), c(y[(x<x1)],0,0), col="gray")
+
+==============
+
+D = rep(NA,100000)
+for (i in 1:100000) D[i] = rnorm(1,163.3,5.19)-rnorm(1,175.1,5.56)
+mean(D); sd(D); length(D[D>0])/100000
+hist(D, freq=F, xlab='', breaks=100, main='Simulation and Theoretical Distributions')
+x=seq(-40,20,0.01); lines(x, dnorm(x,-11.8,7.6), lwd=2)
+
+CLT_Simulation = function(p_dist, m, s, n, ...) {
+   Xbar = rep(NA, 100000) 
+   for(i in 1:100000) Xbar[i] = mean(p_dist(n,...))
+   hist(Xbar, freq=F, breaks=100, ylab='Density', xlab='', col="skyblue", main='Simulation Results')
+   lines(density(Xbar), col='black', lwd=2) 
+   curve(dnorm(x, m, s/sqrt(n)), min(Xbar), max(Xbar), col = 'red', lwd=2, add=TRUE) }
+
+par(mfrow=c(1,2)) # 플롯의 파라메터 설정(한 그래프에 옆으로 2개 플롯)
+CLT_Simulation(rchisq, m=5, s=sqrt(2*5), n=10, df=5)
+CLT_Simulation(rf, m=10/8, s=2*100*13/(5*64*6) , n=10, df1=5, df2=10) 
+
+# install.packages("readxl")
+library(readxl)
+Ex5_df = read_excel("Return.xlsx")
+Rb = Ex5_df$RETURN1; Rb = Rb[!is.na(Rb)]
+Rc = Ex5_df$RETURN2; Rc = Rc[!is.na(Rc)]
+
+mu_d=mean(Rb)-mean(Rc); mu_d
+n=length(Rb); m=length(Rc)
+Sx = var(Rb); Sy = var(Rc)
+Sp = ((n-1)*Sx + (m-1)*Sy) / (n+m-2)
+stderr = sqrt(Sp*(1/n + 1/m)); stderr
+t=seq(-4, 4, 0.01); Diff=mu_d+stderr*t; Density=dt(t,n+m-2)
+plot(Diff, Density, type="l", lwd=2, main="Mean Difference Distribution", xlab="Xbar(Bank) - Ybar(Computer)")
+polygon(c(Diff[(Diff<0)],0), c(Density[(Diff<0)],0), col="gray")
+pt(-mu_d/stderr, n+m-2)

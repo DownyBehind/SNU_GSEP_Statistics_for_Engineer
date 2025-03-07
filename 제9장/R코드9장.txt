@@ -1,0 +1,80 @@
+# [그림 9-1]
+x=seq(-4,4,0.01); y=dnorm(x); x1=qnorm(0.025); x2=qnorm(0.975)
+plot(x, y, xlab='', type='l', ylab='', lwd=2, main='표준정규분포의 확률밀도함수') 
+polygon(c(x2,x[(x>x2)]), c(0,y[(x>x2)]), col="gray")
+polygon(c(x[(x<x1)],x1), c(y[(x<x1)],0), col="gray")
+
+# [그림 9-2]
+x=seq(-5,5,0.01); y=dt(x,4); x1=qt(0.025,4); x2=qt(0.975,4)
+plot(x, y, xlab='', type='l', ylab='', lwd=2, main='자유도 4인 t-분포의 확률밀도함수') 
+polygon(c(x2,x[(x>x2)],5), c(0,y[(x>x2)],0), col="gray")
+polygon(c(-5,x[(x<x1)],x1), c(0,y[(x<x1)],0), col="gray")
+
+# 예제 1 , 2 , 3
+x = c(173, 171, 178, 171, 167)
+mean(x); 5/sqrt(5)
+sd(x)/sqrt(5)
+mean(x) + c(qnorm(0.025), qnorm(0.975)) * 5/sqrt(5)
+mean(x) + c(qt(0.025,4), qt(0.975,4)) * sd(x)/sqrt(5)
+
+# 예제 4
+x = rnorm(50, 168, 5)
+mean(x) + c(qnorm(0.025), qnorm(0.975)) * sd(x)/sqrt(50)
+c(qnorm(0.975), qt(0.975,49), qt(0.975,49)-qnorm(0.975))
+
+# 예제 5
+phat=1500/2500; shat=sqrt(phat*(1-phat)/2500); shat
+c(qnorm(0.025,phat,shat),qnorm(0.975,phat,shat))
+
+# [그림 9-3]
+x=seq(0,20,0.01); y=dchisq(x,4); x1=qchisq(0.025,4); x2=qchisq(0.975,4)
+plot(x, y, xlab='', type='l', ylab='', lwd=2, main='자유도 4인 카이제곱분포의 확률밀도함수') 
+polygon(c(x2,x[(x>x2)],20), c(0,y[(x>x2)],0), col="gray")
+polygon(c(0,x[(x<x1)],x1), c(0,y[(x<x1)],0), col="gray")
+
+# 예제 6
+sqrt(2/(20-1))*5 # 표본분산의 표준오차
+c(19*5/qchisq(0.975,19) , 19*5/qchisq(0.025,19)) # 95% 신뢰구간
+
+# 예제 8
+xbar = rep(0,20)
+for(i in 1:20) xbar[i] = mean(rnorm(15, 100, 10))
+L95 = xbar + qnorm(0.025) * 10 / sqrt(15)
+U95 = xbar + qnorm(0.975) * 10 / sqrt(15)
+plot(1:20, xbar, ylim=c(85,115), xlab="무작위표본 반복 횟수", ylab="95% 신뢰구간", main="20개의 무작위 구간", pch=16)
+for(i in 1:20)  arrows(x0=i, y0=L95[i], x1=i, y1=U95[i], code=3, angle=90, length=0.15)
+abline(h=100, lwd=2)
+
+# 다양한 pch 모습
+plot(0:10,0:10,type="n",xlab="",ylab="")
+k = -1
+for (i in c(1,3,5,7,9)) {
+   for (j in c(1,3,5,7,9)) {
+      k = k+1
+      if (k<26) points(i,j,pch=k,cex=2)}} # 'cex=2' 옵션은 pch 크기를 2배로 크게 늘리라는 명령어이다. 
+
+# 연습문제 2
+x=1:5; sd(x)
+sqrt(4/2)*gamma(2)/gamma(2.5)*sd(x) # sigma의 불편추정값 (1)
+s = rep(0,100000) # 시뮬레이션 코드 (3)
+for(i in 1:100000) s[i] = sqrt(4)/mu*sd(rnorm(5,0,2))
+mean(s)
+(참고) 표준오차에 대한 코드
+mu=sqrt(2)*gamma(2.5)/gamma(2); sqrt(1-mu^2/4)*sd(x) # 표준오차 (2)
+
+# 연습문제 3
+c(32+qnorm(0.005)*4/10, 32+qnorm(0.995)*4/10) # 99% 신뢰구간 (2)
+(qnorm(0.975)*5)^2 # 표본크기결정 문제 (3)
+
+# 연습문제 4
+qnorm(0.975)*sqrt(0.0825*(1-0.0825)/2000) # 오차한계 (2)
+qnorm(0.95)^2 / (4*0.04^2) # 표본크기결정 (3)
+
+# 연습문제 5
+S2 = rep(0,20)
+for(i in 1:20) S2[i] = var(rnorm(5, 0, sqrt(4)))
+L95 = 4*S2/qchisq(0.975,4)
+U95 = 4*S2/qchisq(0.025,4)
+plot(1:20, S2, ylim=c(0,80), xlab="무작위표본 반복 횟수", ylab="95% 신뢰구간", main="모분산에 대한 20개의 무작위 구간", pch=16)
+for(i in 1:20)  arrows(x0=i, y0=L95[i], x1=i, y1=U95[i], code=3, angle=90, length=0.15)
+abline(h=4, lwd=2)
