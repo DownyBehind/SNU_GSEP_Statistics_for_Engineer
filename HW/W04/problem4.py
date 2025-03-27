@@ -48,3 +48,7 @@ plt.xlabel("Number of Cakes (Q)")
 plt.ylabel("Expected Profit (Won)")
 plt.legend()
 plt.show()
+
+
+# Q. 만약 못먹고 돌아간 사람이 있다면 -50000원의 손실이 생기다고 가정하자. 그럴 경우에 케익을 준비해야 하는 최적 갯수는 얼마가 될 것인가?
+# 코드 수정해서 적용해 볼 것 
